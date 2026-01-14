@@ -1,0 +1,13 @@
+.single_line{
+    border-bottom: 2px; 
+    border-style: outset;
+    border-color: gray;
+}
+
+.ingredient_form{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap:20px;
+    padding: 20px 20px;
+}
