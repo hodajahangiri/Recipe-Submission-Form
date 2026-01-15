@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 
-function IngredientForm({ isAddIngredient }) {
+function IngredientForm({ isAddIngredient , setIsAddIngredient , setInputRecipe }) {
 
     const [inputIngredient, setInputIngredient] = useState({
         name: "",
@@ -18,24 +18,17 @@ function IngredientForm({ isAddIngredient }) {
 
     const validateField = (id, value) => {
         const floatValue = parseFloat(value);
-        console.log("floatValue", floatValue);
-        // const floatRegex = /^-?\d+\.\d+$/;
         const floatRegex = /^[+-]?(\d+(\.\d*)?|\.\d+)$/;
-
-        console.log(floatRegex.test(value))
-
         switch (id) {
             case "name":
-                return (isAddIngredient && value.length >= 2 && value.length <= 50) ? "" : "Must have 10-500 characters";
+                return (isAddIngredient && value.length >= 2 && value.length <= 50) ? "" : "Must have 2-50 characters";
             case "quantity":
                 return (floatValue && isAddIngredient && floatRegex.test(value) && floatValue >= 0.1 && floatValue <= 1000) ? "" : "Must be a float between 0.1-1000";
         }
     };
 
-    const handleChangeUnit = (event) => {
-        setInputIngredient(prevData => ({ ...prevData, ["unit"]: event.target.value }));
-    }
-
+    
+    // Handle the Quantity to show it like float with two decimal
     const handleBlur = (event) => {
         const { id, value } = event.target;
         // Optional: Format the value when the user leaves the field
@@ -46,24 +39,34 @@ function IngredientForm({ isAddIngredient }) {
             setInputIngredient(prevData => ({ ...prevData, [id]: '' })); // Clear if not a valid number
         }
     };
-
+    
     const handleChange = (event) => {
         const { id, value } = event.target; // Grabbing the id and value properties from the input element
-        console.log(id, value);
-        console.log(`id: ${id}, value: ${value}`);
         setInputIngredient(prevData => ({ ...prevData, [id]: value })); //Creating a new object, spreading old object, updating the value of the key that we are changing
         // real time validation of field information (call validateField)
         const error = validateField(id, value);
         setErrors(prevData => ({ ...prevData, [id]: error }));
     };
-
+    
+    // For selector we should create different handle change
+    const handleChangeUnit = (event) => {
+        setInputIngredient(prevData => ({ ...prevData, ["unit"]: event.target.value }));
+    };
 
     const handleAddIngredient = (event) => {
         event.preventDefault();
         console.log("ADD Clicked");
-
-    }
-
+        // Check the input all keys have value
+        if (Object.values(inputIngredient).every(value =>
+            value !== null && value !== undefined && value !== "")) {
+            //add it to the inputRecipe state
+            setInputRecipe(prevData => ({ ...prevData, ["ingredients"]: [...prevData["ingredients"], inputIngredient]}));
+            // Hide the Ingredient Form
+            setIsAddIngredient(false);
+        } else {
+            alert("You should enter all fields of Ingredients form");
+        };
+    };
 
     return (
         <>

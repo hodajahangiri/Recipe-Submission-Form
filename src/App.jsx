@@ -26,8 +26,8 @@ function App() {
             <Tab label="Recipes" value="2" />
           </TabList>
         </Box>
-        <TabPanel value="1"><RecipeForm /></TabPanel>
-        <TabPanel value="2"><DisplayRecipes /></TabPanel>
+        <TabPanel value="1"><RecipeForm setRecipes={setRecipes} setTab={setTab}/></TabPanel>
+        <TabPanel value="2"><DisplayRecipes recipes={recipes}/></TabPanel>
       </TabContext>
     </div>
   )

@@ -2,19 +2,19 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
 import { useState } from 'react';
 import "./RecipeForm.css";
 import IngredientForm from '../IngredientForm/IngredientForm';
+import DisplayIngredients from '../DisplayIngredients/DisplayIngredients';
 
-function RecipeForm() {
+function RecipeForm({ setRecipes, setTab}) {
 
     const [isAddIngredient, setIsAddIngredient] = useState(false);
 
     const [inputRecipe, setInputRecipe] = useState({
         recipe_title: "",
         description: "",
+        image_url: "",
         servings: 0,
         difficulty_level: "Easy",
         category: "Appetizer",
@@ -25,38 +25,33 @@ function RecipeForm() {
     const [errors, setErrors] = useState({
         recipe_title: "",
         description: "",
+        image_url: ""
     });
 
-    const handleDeleteIngredient = (idx) => {
-        setInputRecipe(inputRecipe.ingredients.filter((item, index) => index !== idx));
-    }
-
     const validateField = (id, value) => {
-
+        const imageRegex = /\.(jpeg|jpg|png|gif|svg|webp)$/i;
+        // The other validations are checked by MUI and add default values
         switch (id) {
             case "recipe_title":
                 return (value.length >= 3 && value.length <= 50) ? "" : "Must have 3-50 characters";
             case "description":
                 return (value.length >= 10 && value.length <= 500) ? "" : "Must have 10-500 characters";
+            case "image_url":
+                return (imageRegex.test(value)) ? "" : "Must have Add a correct url";
         }
     };
 
     const handleChange = (event) => {
         const { id, value } = event.target; // Grabbing the id and value properties from the input element
-        console.log(id, value);
-        if (id === 'recipe_title' || id === 'description') {
-            console.log(`id: ${id}, value: ${value}`);
+        if (id === 'recipe_title' || id === 'description' || id === 'image_url') {
             setInputRecipe(prevData => ({ ...prevData, [id]: value })); //Creating a new object, spreading old object, updating the value of the key that we are changing
             // real time validation of field information (call validateField)
             const error = validateField(id, value);
             setErrors(prevData => ({ ...prevData, [id]: error }));
         } else if (id === 'servings') {
-            console.log("serving");
             let inputValue = parseInt(value, 10);
-            console.log(inputValue);
             // Manually clamp the value within the allowed range on change
             if (!isNaN(inputValue)) {
-                console.log("inputValue is not nan")
                 if (inputValue > 20) inputValue = 20;
                 if (inputValue < 0) inputValue = 0;
                 setInputRecipe(prevData => ({ ...prevData, [id]: inputValue }));
@@ -66,31 +61,53 @@ function RecipeForm() {
         }
     };
 
+    // handle the onchange the textbox with select type 
     const handleChangeDifficulty = (event) => {
         setInputRecipe(prevData => ({ ...prevData, ["difficulty_level"]: event.target.value }));
-    }
+    };
     const handleChangeCategory = (event) => {
         setInputRecipe(prevData => ({ ...prevData, ["category"]: event.target.value }));
-    }
-
+    };
     const handleChangeCuisineType = (event) => {
         setInputRecipe(prevData => ({ ...prevData, ["cuisine_type"]: event.target.value }));
+    };
 
-    }
-
-    const openIngriendForm = () => {
-        if(Object.values(inputRecipe).every(value =>
-            value !== null && value !== undefined && value !== "")){
-                console.log("dic is not empty");
-                setIsAddIngredient(true);
-            }else{
-                console.log(inputRecipe.ingredients)
-                alert("You should enter all fields of recipe form")
-            }
+    // If user wants to add Ingredients open the Ingredient Form
+    const openIngredientForm = () => {
+        // Check the all values of the RecipeForm has value
+        if (Object.values(inputRecipe).every(value =>
+            value !== null && value !== undefined && value !== "")) {
+            setIsAddIngredient(true);
+        } else {
+            alert("You should enter all fields of recipe form");
+        }
     };
 
     const onSubmit = (event) => {
         event.preventDefault();
+        console.log("Submit btn clicked!")
+        // Check the validation was empty
+        if (Object.values(inputRecipe).every(value =>
+            value !== null && value !== undefined && value !== "")) {
+            // set the recipe in recipes states
+            setRecipes(prevData => ([...prevData, inputRecipe]));
+            // Clean the whole form
+            setInputRecipe({
+                recipe_title: "",
+                description: "",
+                image_url: "",
+                servings: 0,
+                difficulty_level: "Easy",
+                category: "Appetizer",
+                cuisine_type: "American",
+                ingredients: []
+            });
+            // Go to Display Recipe Tab
+            setTab("2");
+        } else {
+            alert("You should enter all fields of recipe form");
+        }
+
 
     }
 
@@ -122,6 +139,16 @@ function RecipeForm() {
                 value={inputRecipe.description}
                 onChange={handleChange} />
             {errors.description && <p style={{ color: "red" }}> {errors.description}</p>}
+            <TextField
+                id="image_url"
+                label="ImageUrl: Required"
+                placeholder='10-500 characters'
+                variant="outlined"
+                required
+                type='text'
+                value={inputRecipe.image_url}
+                onChange={handleChange} />
+            {errors.image_url && <p style={{ color: "red" }}> {errors.image_url}</p>}
             <TextField
                 id="servings"
                 label="Servings(numeric, 1-20): Required"
@@ -178,25 +205,14 @@ function RecipeForm() {
 
             <div className='single_line'></div>
 
-            <Button style={{ display: isAddIngredient ? "none" : "block" }} onClick={openIngriendForm} variant="contained" >Add Ingredient To Recipe</Button>
+            <Button style={{ display: isAddIngredient ? "none" : "block" }} onClick={openIngredientForm} variant="contained" >Add Ingredient To Recipe</Button>
 
-            {isAddIngredient && <IngredientForm isAddIngredient={isAddIngredient} />}
+            {isAddIngredient && <IngredientForm isAddIngredient={isAddIngredient} setIsAddIngredient={setIsAddIngredient} setInputRecipe={setInputRecipe} />}
 
-            {inputRecipe.ingredients.length > 0 &&
-                inputRecipe.ingredients.map((ingredient, idx) => (
-                    <ListItem
-                        key={idx}>
-                        <ListItemText primary={ingredient.name} />
-                        <ListItemText primary={`: ${ingredient.quantity} ${ingredient.unit} `} />
-                        <Button
-                            onClick={() => handleDeleteIngredient(idx)}
-                            variant="contained"
-                            color="error">
-                            Delete
-                        </Button>
-                    </ListItem>
-                ))
-            }
+            <div className='single_line'></div>
+
+            {inputRecipe.ingredients.length > 0 && <DisplayIngredients ingredients={inputRecipe.ingredients} setInputRecipe={setInputRecipe} />}
+
             <Button type='submit' variant="contained" color="success">Add Recipe</Button>
         </Box>
     )
