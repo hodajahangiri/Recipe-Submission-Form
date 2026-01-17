@@ -7,9 +7,10 @@ import "./RecipeForm.css";
 import IngredientForm from '../IngredientForm/IngredientForm';
 import DisplayIngredients from '../DisplayIngredients/DisplayIngredients';
 
-function RecipeForm({ setRecipes, setTab}) {
+function RecipeForm({setRecipes, setTab}) {
 
     const [isAddIngredient, setIsAddIngredient] = useState(false);
+    
 
     const [inputRecipe, setInputRecipe] = useState({
         recipe_title: "",
@@ -85,7 +86,6 @@ function RecipeForm({ setRecipes, setTab}) {
 
     const onSubmit = (event) => {
         event.preventDefault();
-        console.log("Submit btn clicked!")
         // Check the validation was empty
         if (Object.values(inputRecipe).every(value =>
             value !== null && value !== undefined && value !== "")) {

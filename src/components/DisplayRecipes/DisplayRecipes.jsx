@@ -1,11 +1,10 @@
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardMedia from '@mui/material/CardMedia';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import "./DisplayRecipes.css"
 
 function DisplayRecipes({ recipes }) {
   return (
@@ -13,8 +12,9 @@ function DisplayRecipes({ recipes }) {
     <Box
       sx={{
         width: '100%',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))',
+        display: 'flex',
+        flexWrap: 'wrap',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%),1 fr))',
         gap: 2,
       }}
     >
@@ -54,7 +54,7 @@ function DisplayRecipes({ recipes }) {
               <div className='single_line'></div>
               {recipe.ingredients.length > 0 && (
                 <ul>
-                  <p>Ingredients:</p>
+                  <p><b>Ingredients:</b></p>
                   {
                     recipe.ingredients.map((ingredient,idx) => (
                       <li key={idx}>
@@ -72,10 +72,4 @@ function DisplayRecipes({ recipes }) {
     </Box>
   )
 }
-
-
-
-
-
-
 export default DisplayRecipes

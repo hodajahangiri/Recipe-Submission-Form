@@ -55,7 +55,6 @@ function IngredientForm({ isAddIngredient , setIsAddIngredient , setInputRecipe 
 
     const handleAddIngredient = (event) => {
         event.preventDefault();
-        console.log("ADD Clicked");
         // Check the input all keys have value
         if (Object.values(inputIngredient).every(value =>
             value !== null && value !== undefined && value !== "")) {

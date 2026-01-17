@@ -6,12 +6,14 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Box from '@mui/material/Box';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
 
   const [tab, setTab] = useState('1');
   const [recipes, setRecipes] = useState([]);
+
+  useEffect(() => localStorage.setItem("Recipes",recipes),[recipes]);
 
   const handleChange = (event, newTab) => {
     setTab(newTab);
@@ -26,7 +28,7 @@ function App() {
             <Tab label="Recipes" value="2" />
           </TabList>
         </Box>
-        <TabPanel value="1"><RecipeForm setRecipes={setRecipes} setTab={setTab}/></TabPanel>
+        <TabPanel value="1"><RecipeForm recipes={recipes} setRecipes={setRecipes} setTab={setTab}/></TabPanel>
         <TabPanel value="2"><DisplayRecipes recipes={recipes}/></TabPanel>
       </TabContext>
     </div>
